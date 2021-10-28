@@ -4084,8 +4084,8 @@ function imgui.OnDrawFrame()
 					if imgui.Button(fa.ICON_FA_DOWNLOAD .. u8" обновить", imgui.ImVec2(918, 35)) then
 						if mbobnova then
 							sampAddChatMessage(tag .. color_text .. "Ќачинаю {FFFFFF}устанавливать {FFFF00}найденное обновление", main_color)
-							main_window.v = not main_window.v
-							imgui.Process = main_window.v
+							window.v = not window.v
+							imgui.Process = window.v
 							obnova = true
 						else
 							sampAddChatMessage(tag .. color_text .. "ќбновлений {FFFFFF}не найдено{FFFF00}.", main_color)
