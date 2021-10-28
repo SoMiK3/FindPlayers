@@ -5,7 +5,7 @@ require "lib.moonloader"
 
 script_name("FindPlayers")
 script_author("СоМиК")
-script_version("1.0")
+script_version("1.1")
 script_properties("work-in-pause")
 
 local main_color = 0x5A90CE
@@ -14,8 +14,8 @@ local tag = "[FindPlayers]: "
 
 local dlstatus = require('moonloader').download_status
 
-local script_vers = 1
-local script_vers_text = "1.0"
+local script_vers = 2
+local script_vers_text = "1.1"
 local script_path = thisScript().path
 local script_url = "https://raw.githubusercontent.com/SoMiK3/FindPlayers/main/FindPlayers.lua"
 local update_path = getWorkingDirectory() .. "/fplayersupdate.ini"
@@ -214,6 +214,8 @@ servers = {
 	["Gilbert"] = "80.66.82.191:7777",
 	["Show Low"] = "80.66.82.190:7777"
 }
+
+local loadScr = true
 
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
@@ -470,6 +472,29 @@ function main()
 
 	while true do
 		wait(0)
+		if loadScr then
+			repeat
+				wait(0)
+			until sampIsLocalPlayerSpawned()
+			local ip, port = sampGetCurrentServerAddress()
+			local currentServer = ip .. ":" .. port
+			for k, v in pairs(servers) do
+				if currentServer == v then
+					for i = 1, 3 do
+						sampAddChatMessage(tag .. color_text .. "Сервер: {FFFFFF}Arizona Role Play: " .. k .. "{FFFF00}. Скрипт {FFFFFF}готов {FFFF00}к работе.", main_color)
+					end
+					break
+				else
+					if k == "Show Low" then
+						for i = 1, 10 do
+							sampAddChatMessage(tag .. color_text .. "Скрипт работает только на серверах {FFFFFF}ARIZONA GAMES{FFFF00}!", main_color)
+						end
+						thisScript():unload()
+					end
+				end
+			end
+			loadScr = false
+		end
 		if callbackAct then
 			callbackAct = false
 			if window.v then
@@ -709,6 +734,7 @@ function phone()
 	calling = false
 	phoneProcess = true
 	NumberArray = stringToArray(returnNumber)
+	setPlayerControl(PlayerPed, true)
 	if not sampTextdrawIsExists(tonumber(numbersid["panel"])) and not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
 		sampSendChat("/phone")
 		lua_thread.create(function()
@@ -1249,7 +1275,6 @@ function phone()
 				numbersid["biz"] = "1"
 				break
 			end
-			setPlayerControl(PlayerPed, true)
 		end)
 	end
 end
@@ -2194,6 +2219,13 @@ function sampev.onShowDialog(dialogId, style, title, button1, button2, text)
 		if phoneProcess then
 			nedostupen = true
 			sampAddChatMessage(tag .. color_text .. "У {FFFFFF}абонента {FFFF00}отключен телефон.", main_color)
+			return false
+		end
+	end
+	if dialogId == 0 and text:match("Недостаточно средств для совершения звонка") then
+		if phoneProcess then
+			sampAddChatMessage(tag .. color_text .. "На Вашем телефонном счету {FFFFFF}недостаточно {FFFF00}средств для совершения звонка, {FFFFFF}необходимо пополнить баланс!", main_color)
+			sampSendClickTextdraw(65535)
 			return false
 		end
 	end
@@ -4092,7 +4124,7 @@ function imgui.OnDrawFrame()
 						end
 					end
 					if imgui.Button(fa.ICON_FA_HISTORY .. u8" история обновлений", imgui.ImVec2(918, 35)) then
-						sampShowDialog(1337, "{FFFF00}История обновлений скрипта {FFFFFF}FindPlayers", "{FFFF00}Версия {FFFFFF}1.0{FFFF00}:\n{FFFFFF}- Релиз {808080}(дата выхода: {a5a5a5}28.10.21{808080})                       ", "{ff0000}Закрыть", nil, DIALOG_STYLE_MSGBOX)
+						sampShowDialog(1337, "{FFFF00}История обновлений скрипта {FFFFFF}FindPlayers", "{FFFF00}Версия {FFFFFF}1.0{FFFF00}:\n{FFFFFF}- Релиз {808080}(дата выхода: {a5a5a5}28.10.21{808080}\n{FFFF00}Версия {FFFFFF}1.1{FFFF00}:\n{FFFFFF}- Исправлены некоторые ошибки {808080}(дата выхода: {a5a5a5}28.10.21{808080})                       ", "{ff0000}Закрыть", nil, DIALOG_STYLE_MSGBOX)
 						window.v = false
 						windowActive = true
 					end
