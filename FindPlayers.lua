@@ -14,8 +14,8 @@ local tag = "[FindPlayers]: "
 
 local dlstatus = require('moonloader').download_status
 
-local script_vers = 2
-local script_vers_text = "1.1"
+local script_vers = 3
+local script_vers_text = "1.2"
 local script_path = thisScript().path
 local script_url = "https://raw.githubusercontent.com/SoMiK3/FindPlayers/main/FindPlayers.lua"
 local update_path = getWorkingDirectory() .. "/fplayersupdate.ini"
@@ -474,10 +474,12 @@ function main()
 		wait(0)
 		if loadScr then
 			repeat
-				wait(0)
-			until sampIsLocalPlayerSpawned()
+				id = sampGetPlayerIdByCharHandle(PLAYER_PED)
+				wait(1500)
+			until sampIsPlayerConnected(id)
 			local ip, port = sampGetCurrentServerAddress()
 			local currentServer = ip .. ":" .. port
+			local ik = 1
 			for k, v in pairs(servers) do
 				if currentServer == v then
 					for i = 1, 3 do
@@ -485,9 +487,11 @@ function main()
 					end
 					break
 				else
-					if k == "Show Low" then
+					ik = ik + 1
+					if ik == 18 then
 						for i = 1, 10 do
 							sampAddChatMessage(tag .. color_text .. "Скрипт работает только на серверах {FFFFFF}ARIZONA GAMES{FFFF00}!", main_color)
+							print("Сервер не найден. Скрипт работает только на серверах ARIZONA GAMES!")
 						end
 						thisScript():unload()
 					end
@@ -586,12 +590,23 @@ function stringToArray(str)
 end
 
 function activation()
-	if window.v then
-		window.v = not window.v
-		imgui.Process = false
+	if loadScr then
+		sampAddChatMessage(tag .. color_text .. "Сначала необходимо {FFFFFF}войти {FFFF00}на сервер!", main_color)
+		if window.v then
+			window.v = not window.v
+			imgui.Process = false
+		else
+			window.v = true
+			imgui.Process = true
+		end
 	else
-		window.v = true
-		imgui.Process = true
+		if window.v then
+			window.v = not window.v
+			imgui.Process = false
+		else
+			window.v = true
+			imgui.Process = true
+		end
 	end
 end
 
@@ -744,16 +759,328 @@ function phone()
 			end
 		end)
 	end
-	if #NumberArray == 5 then
+	if #NumberArray == 2 then
 		lua_thread.create(function()
 			while true do
 				wait(0)
 				if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
 					wait(500)
 					if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
-						repeat 
+						repeat
+							if phoneProcess == false then
+								break
+							end
 							sampSendChat("/phone")
 							wait(500)
+							if phoneProcess == false then
+								break
+							end
+						until sampTextdrawIsExists(tonumber(numbersid["panel"])) and sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$")
+					end
+				end
+				repeat
+					wait(50)
+					sampSendClickTextdraw(tonumber(numbersid["panel"]))
+				until sampTextdrawIsExists(tonumber(numbersid["panel"]))
+				repeat 
+					wait(50)
+				until sampTextdrawIsExists(tonumber(numbersid["call"]))
+				repeat
+					if NumberArray ~= nil then
+						sampSendClickTextdraw(tonumber(numbersid[tonumber(NumberArray[1])]))
+						wait(200)
+						onenum = sampTextdrawGetString(tonumber(numbersid["call"]))
+					else
+						phoneProcess = false
+						NumberArray = nil
+						onenum = nil
+						twonum = nil
+						threenum = nil
+						fournum = nil
+						fivenum = nil
+						sixfnum = nil
+						sevennum = nil
+						nedostupen = false
+						numbersid[1] = "1"
+						numbersid[2] = "1"
+						numbersid[3] = "1"
+						numbersid[4] = "1"
+						numbersid[5] = "1"
+						numbersid[6] = "1"
+						numbersid[7] = "1"
+						numbersid[8] = "1"
+						numbersid[9] = "1"
+						numbersid[0] = "1"
+						numbersid["callButton"] = "1"
+						numbersid["call"] = "1"
+						numbersid["panel"] = "1"
+						numbersid["outcoming"] = "1"
+						numbersid["biz"] = "1"
+						break
+					end
+				until onenum:match("^%d$")
+				repeat
+					if NumberArray ~= nil then
+						sampSendClickTextdraw(tonumber(numbersid[tonumber(NumberArray[2])]))
+						wait(200)
+						twonum = sampTextdrawGetString(tonumber(numbersid["call"]))
+					else
+						phoneProcess = false
+						NumberArray = nil
+						onenum = nil
+						twonum = nil
+						threenum = nil
+						fournum = nil
+						fivenum = nil
+						sixfnum = nil
+						sevennum = nil
+						nedostupen = false
+						numbersid[1] = "1"
+						numbersid[2] = "1"
+						numbersid[3] = "1"
+						numbersid[4] = "1"
+						numbersid[5] = "1"
+						numbersid[6] = "1"
+						numbersid[7] = "1"
+						numbersid[8] = "1"
+						numbersid[9] = "1"
+						numbersid[0] = "1"
+						numbersid["callButton"] = "1"
+						numbersid["call"] = "1"
+						numbersid["panel"] = "1"
+						numbersid["outcoming"] = "1"
+						numbersid["biz"] = "1"
+						break
+					end
+				until twonum:match("^%d%d$")
+				repeat
+					if phoneProcess ~= false then
+						sampSendClickTextdraw(tonumber(numbersid["callButton"]))
+						wait(200)
+					else
+						break
+					end
+				until sampTextdrawGetString(tonumber(numbersid["outcoming"])):find("Outcoming") or nedostupen
+				if nedostupen then
+					wait(50)
+					sampSendChat("/phone")
+				else
+					waitCalling = true
+				end
+				phoneProcess = false
+				NumberArray = nil
+				onenum = nil
+				twonum = nil
+				threenum = nil
+				fournum = nil
+				fivenum = nil
+				sixfnum = nil
+				sevennum = nil
+				nedostupen = false
+				numbersid[1] = "1"
+				numbersid[2] = "1"
+				numbersid[3] = "1"
+				numbersid[4] = "1"
+				numbersid[5] = "1"
+				numbersid[6] = "1"
+				numbersid[7] = "1"
+				numbersid[8] = "1"
+				numbersid[9] = "1"
+				numbersid[0] = "1"
+				numbersid["callButton"] = "1"
+				numbersid["call"] = "1"
+				numbersid["panel"] = "1"
+				numbersid["outcoming"] = "1"
+				numbersid["biz"] = "1"
+				break
+			end
+		end)
+	elseif #NumberArray == 3 then
+		lua_thread.create(function()
+			while true do
+				wait(0)
+				if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
+					wait(500)
+					if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
+						repeat
+							if phoneProcess == false then
+								break
+							end
+							sampSendChat("/phone")
+							wait(500)
+							if phoneProcess == false then
+								break
+							end
+						until sampTextdrawIsExists(tonumber(numbersid["panel"])) and sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$")
+					end
+				end
+				repeat
+					wait(50)
+					sampSendClickTextdraw(tonumber(numbersid["panel"]))
+				until sampTextdrawIsExists(tonumber(numbersid["panel"]))
+				repeat 
+					wait(50)
+				until sampTextdrawIsExists(tonumber(numbersid["call"]))
+				repeat
+					if NumberArray ~= nil then
+						sampSendClickTextdraw(tonumber(numbersid[tonumber(NumberArray[1])]))
+						wait(200)
+						onenum = sampTextdrawGetString(tonumber(numbersid["call"]))
+					else
+						phoneProcess = false
+						NumberArray = nil
+						onenum = nil
+						twonum = nil
+						threenum = nil
+						fournum = nil
+						fivenum = nil
+						sixfnum = nil
+						sevennum = nil
+						nedostupen = false
+						numbersid[1] = "1"
+						numbersid[2] = "1"
+						numbersid[3] = "1"
+						numbersid[4] = "1"
+						numbersid[5] = "1"
+						numbersid[6] = "1"
+						numbersid[7] = "1"
+						numbersid[8] = "1"
+						numbersid[9] = "1"
+						numbersid[0] = "1"
+						numbersid["callButton"] = "1"
+						numbersid["call"] = "1"
+						numbersid["panel"] = "1"
+						numbersid["outcoming"] = "1"
+						numbersid["biz"] = "1"
+						break
+					end
+				until onenum:match("^%d$")
+				repeat
+					if NumberArray ~= nil then
+						sampSendClickTextdraw(tonumber(numbersid[tonumber(NumberArray[2])]))
+						wait(200)
+						twonum = sampTextdrawGetString(tonumber(numbersid["call"]))
+					else
+						phoneProcess = false
+						NumberArray = nil
+						onenum = nil
+						twonum = nil
+						threenum = nil
+						fournum = nil
+						fivenum = nil
+						sixfnum = nil
+						sevennum = nil
+						nedostupen = false
+						numbersid[1] = "1"
+						numbersid[2] = "1"
+						numbersid[3] = "1"
+						numbersid[4] = "1"
+						numbersid[5] = "1"
+						numbersid[6] = "1"
+						numbersid[7] = "1"
+						numbersid[8] = "1"
+						numbersid[9] = "1"
+						numbersid[0] = "1"
+						numbersid["callButton"] = "1"
+						numbersid["call"] = "1"
+						numbersid["panel"] = "1"
+						numbersid["outcoming"] = "1"
+						numbersid["biz"] = "1"
+						break
+					end
+				until twonum:match("^%d%d$")
+				repeat
+					if NumberArray ~= nil then
+						sampSendClickTextdraw(tonumber(numbersid[tonumber(NumberArray[3])]))
+						wait(200)
+						threenum = sampTextdrawGetString(tonumber(numbersid["call"]))
+					else
+						phoneProcess = false
+						NumberArray = nil
+						onenum = nil
+						twonum = nil
+						threenum = nil
+						fournum = nil
+						fivenum = nil
+						sixfnum = nil
+						sevennum = nil
+						nedostupen = false
+						numbersid[1] = "1"
+						numbersid[2] = "1"
+						numbersid[3] = "1"
+						numbersid[4] = "1"
+						numbersid[5] = "1"
+						numbersid[6] = "1"
+						numbersid[7] = "1"
+						numbersid[8] = "1"
+						numbersid[9] = "1"
+						numbersid[0] = "1"
+						numbersid["callButton"] = "1"
+						numbersid["call"] = "1"
+						numbersid["panel"] = "1"
+						numbersid["outcoming"] = "1"
+						numbersid["biz"] = "1"
+						break
+					end
+				until threenum:match("^%d%d%d$")
+				repeat
+					if phoneProcess ~= false then
+						sampSendClickTextdraw(tonumber(numbersid["callButton"]))
+						wait(200)
+					else
+						break
+					end
+				until sampTextdrawGetString(tonumber(numbersid["outcoming"])):find("Outcoming") or nedostupen
+				if nedostupen then
+					wait(50)
+					sampSendChat("/phone")
+				else
+					waitCalling = true
+				end
+				phoneProcess = false
+				NumberArray = nil
+				onenum = nil
+				twonum = nil
+				threenum = nil
+				fournum = nil
+				fivenum = nil
+				sixfnum = nil
+				sevennum = nil
+				nedostupen = false
+				numbersid[1] = "1"
+				numbersid[2] = "1"
+				numbersid[3] = "1"
+				numbersid[4] = "1"
+				numbersid[5] = "1"
+				numbersid[6] = "1"
+				numbersid[7] = "1"
+				numbersid[8] = "1"
+				numbersid[9] = "1"
+				numbersid[0] = "1"
+				numbersid["callButton"] = "1"
+				numbersid["call"] = "1"
+				numbersid["panel"] = "1"
+				numbersid["outcoming"] = "1"
+				numbersid["biz"] = "1"
+				break
+			end
+		end)
+	elseif #NumberArray == 5 then
+		lua_thread.create(function()
+			while true do
+				wait(0)
+				if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
+					wait(500)
+					if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
+						repeat
+							if phoneProcess == false then
+								break
+							end
+							sampSendChat("/phone")
+							wait(500)
+							if phoneProcess == false then
+								break
+							end
 						until sampTextdrawIsExists(tonumber(numbersid["panel"])) and sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$")
 					end
 				end
@@ -983,9 +1310,15 @@ function phone()
 				if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
 					wait(500)
 					if not sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$") then
-						repeat 
+						repeat
+							if phoneProcess == false then
+								break
+							end
 							sampSendChat("/phone")
 							wait(500)
+							if phoneProcess == false then
+								break
+							end
 						until sampTextdrawIsExists(tonumber(numbersid["panel"])) and sampTextdrawGetString(tonumber(numbersid["biz"])):match("^BIZ$")
 					end
 				end
@@ -1277,6 +1610,7 @@ function phone()
 			end
 		end)
 	end
+	setPlayerControl(PlayerPed, true)
 end
 
 function sampev.onSendClickTextDraw(id)
@@ -1344,6 +1678,7 @@ function sampev.onServerMessage(color, msg)
 	end
 	if waitCalling then
 		if msg:match("^%[Информация%] {FFFFFF}Собеседник взял трубку$") then
+			setPlayerControl(PlayerPed, true)
 			calling = true
 			if calling then
 				if chkmsg.v then
@@ -1380,6 +1715,7 @@ function sampev.onServerMessage(color, msg)
 		if msg:match("%[Информация%] {......}Звонок окончен! Время разговора {......}%d+ секунд%.") then
 			calling = false
 			waitCalling = false
+			setPlayerControl(PlayerPed, true)
 			lua_thread.create(function ()
 				while true do
 					wait(0)
@@ -1393,6 +1729,7 @@ function sampev.onServerMessage(color, msg)
 		if msg:match("^%[Информация%] {FFFFFF}Собеседник отменил звонок$") then
 			calling = false
 			waitCalling = false
+			setPlayerControl(PlayerPed, true)
 			lua_thread.create(function ()
 				while true do
 					wait(0)
@@ -1402,6 +1739,97 @@ function sampev.onServerMessage(color, msg)
 					break
 				end
 			end)
+		end
+	end
+	if phoneProcess or waitCalling or calling then
+		if msg:match("^У вас нет sim карты!$") then
+			phoneProcess = false
+			NumberArray = nil
+			onenum = nil
+			twonum = nil
+			threenum = nil
+			fournum = nil
+			fivenum = nil
+			sixfnum = nil
+			sevennum = nil
+			nedostupen = false
+			waitCalling = false
+			calling = false
+			numbersid[1] = "1"
+			numbersid[2] = "1"
+			numbersid[3] = "1"
+			numbersid[4] = "1"
+			numbersid[5] = "1"
+			numbersid[6] = "1"
+			numbersid[7] = "1"
+			numbersid[8] = "1"
+			numbersid[9] = "1"
+			numbersid[0] = "1"
+			numbersid["callButton"] = "1"
+			numbersid["call"] = "1"
+			numbersid["panel"] = "1"
+			numbersid["outcoming"] = "1"
+			numbersid["biz"] = "1"
+			setPlayerControl(PlayerPed, true)
+			sampAddChatMessage(tag .. color_text .. "У вас не установлена {FFFFFF}сим-карта {FFFF00}в телефон!", main_color)
+			return false
+		end
+		if msg:match("^%[Информация%] {......}Вы отменили звонок$") then
+			phoneProcess = false
+			NumberArray = nil
+			onenum = nil
+			twonum = nil
+			threenum = nil
+			fournum = nil
+			fivenum = nil
+			sixfnum = nil
+			sevennum = nil
+			nedostupen = false
+			waitCalling = false
+			calling = false
+			numbersid[1] = "1"
+			numbersid[2] = "1"
+			numbersid[3] = "1"
+			numbersid[4] = "1"
+			numbersid[5] = "1"
+			numbersid[6] = "1"
+			numbersid[7] = "1"
+			numbersid[8] = "1"
+			numbersid[9] = "1"
+			numbersid[0] = "1"
+			numbersid["callButton"] = "1"
+			numbersid["call"] = "1"
+			numbersid["panel"] = "1"
+			numbersid["outcoming"] = "1"
+			numbersid["biz"] = "1"
+			setPlayerControl(PlayerPed, true)
+		end
+		if msg:match("^%[Подсказка%] {......}Номера телефонов государственных служб:$") then
+			return false
+		end
+		if msg:match("^{......}1%.{......} 111 %- {......}Проверить баланс телефона$") then
+			return false
+		end
+		if msg:match("^{......}2%.{......} 060 %- {......}Служба точного времени$") then
+			return false
+		end
+		if msg:match("^{......}3%.{......} 911 %- {......}Полицейский участок$") then
+			return false
+		end
+		if msg:match("^{......}4%.{......} 912 %- {......}Скорая помощь$") then
+			return false
+		end
+		if msg:match("^{......}5%.{......} 913 %- {......}Такси$") then
+			return false
+		end
+		if msg:match("^{......}6%.{......} 914 %- {......}Механик$") then
+			return false
+		end
+		if msg:match("^{......}7%.{......} 8828 %- {......}Справочная центрального банка$") then
+			return false
+		end
+		if msg:match("^{......}8%.{......} 997 %- {......}Служба по вопросам жилой недвижимости %(узнать владельца дома%)$") then
+			return false
 		end
 	end
 end
@@ -1419,10 +1847,37 @@ function sampev.onSendCommand(cmd)
 			return false
 		end
 	end
-	if calling then
+	if calling or waitCalling then
 		if cmd:find("/phone") then
+			phoneProcess = false
+			NumberArray = nil
+			onenum = nil
+			twonum = nil
+			threenum = nil
+			fournum = nil
+			fivenum = nil
+			sixfnum = nil
+			sevennum = nil
+			nedostupen = false
 			waitCalling = false
 			calling = false
+			calling = false
+			numbersid[1] = "1"
+			numbersid[2] = "1"
+			numbersid[3] = "1"
+			numbersid[4] = "1"
+			numbersid[5] = "1"
+			numbersid[6] = "1"
+			numbersid[7] = "1"
+			numbersid[8] = "1"
+			numbersid[9] = "1"
+			numbersid[0] = "1"
+			numbersid["callButton"] = "1"
+			numbersid["call"] = "1"
+			numbersid["panel"] = "1"
+			numbersid["outcoming"] = "1"
+			numbersid["biz"] = "1"
+			setPlayerControl(PlayerPed, true)
 		end
 	end
 end
@@ -1430,16 +1885,19 @@ end
 function sampev.onSendClientJoin(version, mod, nickname, challengeResponse, joinAuthKey, clientVer, challengeResponse2)
 	local ip, port = sampGetCurrentServerAddress()
 	local currentServer = ip .. ":" .. port
+	local ik = 1
 	for k, v in pairs(servers) do
 		if currentServer == v then
-			for i = 1, 10 do
+			for i = 1, 3 do
 				sampAddChatMessage(tag .. color_text .. "Сервер: {FFFFFF}Arizona Role Play: " .. k .. "{FFFF00}. Скрипт {FFFFFF}готов {FFFF00}к работе.", main_color)
 			end
 			break
 		else
-			if k == "Show Low" then
+			ik = ik + 1
+			if ik == 18 then
 				for i = 1, 10 do
 					sampAddChatMessage(tag .. color_text .. "Скрипт работает только на серверах {FFFFFF}ARIZONA GAMES{FFFF00}!", main_color)
+					print("Сервер не найден. Скрипт работает только на серверах ARIZONA GAMES!")
 				end
 				thisScript():unload()
 			end
@@ -2219,12 +2677,76 @@ function sampev.onShowDialog(dialogId, style, title, button1, button2, text)
 		if phoneProcess then
 			nedostupen = true
 			sampAddChatMessage(tag .. color_text .. "У {FFFFFF}абонента {FFFF00}отключен телефон.", main_color)
+			setPlayerControl(PlayerPed, true)
 			return false
 		end
 	end
 	if dialogId == 0 and text:match("Недостаточно средств для совершения звонка") then
 		if phoneProcess then
 			sampAddChatMessage(tag .. color_text .. "На Вашем телефонном счету {FFFFFF}недостаточно {FFFF00}средств для совершения звонка, {FFFFFF}необходимо пополнить баланс!", main_color)
+			phoneProcess = false
+			NumberArray = nil
+			onenum = nil
+			twonum = nil
+			threenum = nil
+			fournum = nil
+			fivenum = nil
+			sixfnum = nil
+			sevennum = nil
+			nedostupen = false
+			waitCalling = false
+			calling = false
+			numbersid[1] = "1"
+			numbersid[2] = "1"
+			numbersid[3] = "1"
+			numbersid[4] = "1"
+			numbersid[5] = "1"
+			numbersid[6] = "1"
+			numbersid[7] = "1"
+			numbersid[8] = "1"
+			numbersid[9] = "1"
+			numbersid[0] = "1"
+			numbersid["callButton"] = "1"
+			numbersid["call"] = "1"
+			numbersid["panel"] = "1"
+			numbersid["outcoming"] = "1"
+			numbersid["biz"] = "1"
+			setPlayerControl(PlayerPed, true)
+			sampSendClickTextdraw(65535)
+			return false
+		end
+	end
+	if dialogId == 0 and text:match("^Телефон находится в режиме \"В самолете\"$") then
+		if phoneProcess then
+			sampAddChatMessage(tag .. color_text .. "Ваш телефон находится в режиме \"{FFFFFF}В самолете{FFFF00}\". Переключите его в обычный режим и повторите попытку", main_color)
+			phoneProcess = false
+			NumberArray = nil
+			onenum = nil
+			twonum = nil
+			threenum = nil
+			fournum = nil
+			fivenum = nil
+			sixfnum = nil
+			sevennum = nil
+			nedostupen = false
+			waitCalling = false
+			calling = false
+			numbersid[1] = "1"
+			numbersid[2] = "1"
+			numbersid[3] = "1"
+			numbersid[4] = "1"
+			numbersid[5] = "1"
+			numbersid[6] = "1"
+			numbersid[7] = "1"
+			numbersid[8] = "1"
+			numbersid[9] = "1"
+			numbersid[0] = "1"
+			numbersid["callButton"] = "1"
+			numbersid["call"] = "1"
+			numbersid["panel"] = "1"
+			numbersid["outcoming"] = "1"
+			numbersid["biz"] = "1"
+			setPlayerControl(PlayerPed, true)
 			sampSendClickTextdraw(65535)
 			return false
 		end
@@ -3676,10 +4198,12 @@ function imgui.OnDrawFrame()
 					imgui.Spacing()
 					if imgui.Button(fa.ICON_FA_UNDO .. u8" перезагрузить скрипт", imgui.ImVec2(453, 35)) then
 						thisScript():reload()
+						setPlayerControl(PlayerPed, true)
 					end
 					imgui.SameLine()
 					if imgui.Button(fa.ICON_FA_POWER_OFF .. u8" выгрузить скрипт", imgui.ImVec2(453, 35)) then
 						thisScript():unload()
+						setPlayerControl(PlayerPed, true)
 					end
 					imgui.SameLine()
 					imgui.Spacing()
@@ -4124,7 +4648,7 @@ function imgui.OnDrawFrame()
 						end
 					end
 					if imgui.Button(fa.ICON_FA_HISTORY .. u8" история обновлений", imgui.ImVec2(918, 35)) then
-						sampShowDialog(1337, "{FFFF00}История обновлений скрипта {FFFFFF}FindPlayers", "{FFFF00}Версия {FFFFFF}1.0{FFFF00}:\n{FFFFFF}- Релиз {808080}(дата выхода: {a5a5a5}28.10.21{808080}\n{FFFF00}Версия {FFFFFF}1.1{FFFF00}:\n{FFFFFF}- Исправлены некоторые ошибки {808080}(дата выхода: {a5a5a5}28.10.21{808080})                       ", "{ff0000}Закрыть", nil, DIALOG_STYLE_MSGBOX)
+						sampShowDialog(1337, "{FFFF00}История обновлений скрипта {FFFFFF}FindPlayers", "{FFFF00}Версия {FFFFFF}1.0 {808080}(дата выхода: {a5a5a5}28.10.21{808080}){FFFF00}:\n{FFFFFF}- Релиз\n{FFFF00}Версия {FFFFFF}1.1 {808080}(дата выхода: {a5a5a5}28.10.21{808080}){FFFF00}:\n{FFFFFF}- Исправлены некоторые ошибки\n{FFFF00}Версия {FFFFFF}1.2 {808080}(дата выхода: {a5a5a5}31.10.21{808080}){FFFF00}:\n{FFFFFF}- Исправлено много ошибок\n{FFFFFF}- Предусмотрен и заранее исправлен возможный баг\n{FFFFFF}- Добавлена поддержка двухзначных и трёхзначных номеров", "{ff0000}Закрыть", nil, DIALOG_STYLE_MSGBOX)
 						window.v = false
 						windowActive = true
 					end
